@@ -52,9 +52,17 @@ def evaluate_results(model, acc, X_test, y_test):
     print(confusion_matrix(y_test, preds))
 
 def plot_attention(attention, head=0):
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(attention[0, head], cmap="viridis")
-    plt.xlabel("Key Position")
-    plt.ylabel("Query Position")
-    plt.title(f"Attention Head {head}")
+    L = attention.shape[-1]
+    uniform = 1.0 / L
+    delta = attention[0, head] - uniform
+
+    sns.heatmap(delta, cmap="coolwarm", center=0)
+    plt.title(f"Attention Head {head} (Deviation from Uniform)")
     plt.show()
+
+    # plt.figure(figsize=(8, 6))
+    # sns.heatmap(attention[0, head], cmap="viridis")
+    # plt.xlabel("Key Position")
+    # plt.ylabel("Query Position")
+    # plt.title(f"Attention Head {head}")
+    # plt.show()

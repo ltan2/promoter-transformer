@@ -19,7 +19,7 @@ def main():
     print("Label shape:", y.shape)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.1, random_state=25,stratify=y
+        X, y, test_size=0.15, random_state=25,stratify=y
     )
 
     model_obj = ModelDef()
@@ -34,15 +34,14 @@ def main():
         metrics=["accuracy", None]
     )
 
-    model.fit(X_train, [y_train, np.zeros((len(y_train),))], epochs=10, batch_size=25)
+    model.fit(X_train, [y_train, np.zeros((len(y_train),))], epochs=20, batch_size=35)
 
     loss, acc = model.evaluate(X_test, y_test)
     
     functions.evaluate_results(model, acc, X_test, y_test)
 
-    sample = X_test[:1]
     attention_model = model_obj.attention_def(model)
-    attention_weights = attention_model.predict(sample)
+    attention_weights = attention_model.predict(X_test)
     print(attention_weights.shape)
     functions.plot_attention(attention_weights)
 

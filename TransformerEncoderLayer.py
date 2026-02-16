@@ -5,8 +5,8 @@ class TransformerEncoderLayer(layers.Layer):
     def __init__(self, embed_dim, ff_dim, rate=0.1):
         super().__init__()
         self.att = layers.MultiHeadAttention(
-            num_heads=2,
-            key_dim=embed_dim
+            num_heads=4,
+            key_dim=embed_dim // 4
         )
         self.ffn = keras.Sequential([
             layers.Dense(ff_dim, activation="relu"),
@@ -18,10 +18,10 @@ class TransformerEncoderLayer(layers.Layer):
         self.dropout2 = layers.Dropout(rate)
 
     def call(self, inputs, training):
-        attn_output, attn_scores = self.att(inputs, inputs, return_attention_scores=True) # residuals
+        attn_output, attn_scores_1 = self.att(inputs, inputs, return_attention_scores=True) # residuals
         attn_output = self.dropout1(attn_output, training=training) #prevent overfitting
         out1 = self.layernorm1(inputs + attn_output) # stabilize learning
 
         ffn_output = self.ffn(out1) # adds non linear again
         ffn_output = self.dropout2(ffn_output, training=training)
-        return self.layernorm2(out1 + ffn_output), attn_scores
+        return self.layernorm2(out1 + ffn_output), attn_scores_1
