@@ -36,14 +36,12 @@ def main():
         seq = parts[2].strip().upper()
 
         # create more dataset
-        shifts = [-1, 0, 1]  # left, original, right
-        for s in shifts:
+        # Augmentation: shifts and reverse complement
+        for s in [-1, 0, 1]:
             sequences.append(shift_sequence(seq, shift=s))
+            sequences.append(reverse_complement(seq))
             labels.append(label)
-        sequences.append(seq)
-        sequences.append(reverse_complement(seq))
-        labels.append(label)
-        labels.append(label)
+            labels.append(label)
 
     dna_dict = {'A':0, 'T': 1, 'G': 2, 'C': 3, 'N': 4}
 
@@ -57,14 +55,14 @@ def main():
     print("Label shape:", y.shape)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.1, random_state=20
+        X, y, test_size=0.1, random_state=25, stratify=y
     )
 
     class TransformerModel(layers.Layer):
-        def __init__(self, embed_dim, ff_dim, rate=0.1):
+        def __init__(self, embed_dim, ff_dim, rate=0.01):
             super().__init__()
             self.att = layers.MultiHeadAttention(
-                num_heads=1,
+                num_heads=2,
                 key_dim=embed_dim
             )
             self.ffn = keras.Sequential([
