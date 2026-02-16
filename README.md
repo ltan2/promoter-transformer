@@ -1,1 +1,3 @@
 # promoter-transformer
+
+This project builds a small Transformer model classify short DNA sequences as promoter or non-promoter regions using the UCI Molecular Biology dataset. DNA sequences are tokenized into numerical representations and passed through an embedding layer. A lightweight Transformer encoder learns sequence-wide patterns through self-attention, allowing it to detect biologically meaningful motifs such as promoter consensus regions. The final sequence representation is pooled and fed into a classifier to predict promoter probability

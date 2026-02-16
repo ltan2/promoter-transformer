@@ -104,7 +104,7 @@ def main():
 
     # Summarizes the whole DNA sequence into one representative feature vector for classification
     x = layers.GlobalAveragePooling1D()(x)
-    x = layers.Dropout(0.2)(x)
+    x = layers.Dropout(0.1)(x)
     # final classifier
     outputs = layers.Dense(2, activation="softmax")(x)
 
