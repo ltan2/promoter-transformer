@@ -2,6 +2,9 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import torch
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
 
 def reverse_complement(seq):
     complement = {'A':'T', 'T':'A', 'C':'G', 'G':'C'}
@@ -60,9 +63,18 @@ def plot_attention(attention, head=0):
     plt.title(f"Attention Head {head} (Deviation from Uniform)")
     plt.show()
 
-    # plt.figure(figsize=(8, 6))
-    # sns.heatmap(attention[0, head], cmap="viridis")
-    # plt.xlabel("Key Position")
-    # plt.ylabel("Query Position")
-    # plt.title(f"Attention Head {head}")
-    # plt.show()
+def encode_to_int(sequence):
+    mapping = {'A':0, 'C':1, 'G':2, 'T':3, 'N':4}
+    return torch.tensor([mapping[base] for base in sequence])
+
+def one_hot_encode(sequence):
+    int_encoded = encode_to_int(sequence)
+    return F.one_hot(int_encoded, num_classes=5).float()
+
+def train_loader(X_train_cnn, y_train_cnn):
+    return DataLoader(
+        TensorDataset(X_train_cnn, y_train_cnn),
+        batch_size=32,
+        shuffle=True
+    )
+

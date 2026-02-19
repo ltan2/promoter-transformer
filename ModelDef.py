@@ -3,7 +3,7 @@ from tensorflow import keras
 from TransformerEncoderLayer import TransformerEncoderLayer
 import tensorflow as tf
 
-class ModelDef:
+class TransformerDef:
 
     def transformer_def(self, sequences):
         dna_dict = {'A':0, 'T': 1, 'G': 2, 'C': 3, 'N': 4}
