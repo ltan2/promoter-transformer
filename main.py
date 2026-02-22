@@ -11,6 +11,7 @@ import numpy as np
 import functions
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 def main():
     sequences, labels = functions.load_data('promoters.data')
@@ -25,8 +26,11 @@ def main():
         X, y, test_size=0.15, random_state=25,stratify=y
     )
 
-    X_train_cnn = functions.one_hot(torch.tensor(X_train, dtype=torch.long), num_classes=5).float()
-    X_test_cnn  = functions.one_hot(torch.tensor(X_test, dtype=torch.long), num_classes=5).float()
+    print(X_train.shape)
+
+    X_train_cnn = F.one_hot(torch.tensor(X_train, dtype=torch.long), num_classes=5).float()
+    X_test_cnn  = F.one_hot(torch.tensor(X_test, dtype=torch.long), num_classes=5).float()
+    print(X_train_cnn.shape)
 
     y_train_cnn = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1)
     y_test_cnn  = torch.tensor(y_test, dtype=torch.float32).unsqueeze(1)
@@ -51,9 +55,9 @@ def main():
     transformer_model.fit(X_train, [y_train, np.zeros((len(y_train),))], epochs=20, batch_size=35)
     batches_cnn = functions.train_loader(X_train_cnn, y_train_cnn)
 
-    for epoch in range(num_epochs=20):
+    for epoch in range(20):
         cnn_model.train()
-        
+        total_loss = 0
         for batch_X, batch_y in batches_cnn:
             batch_X = batch_X.to(device)
             batch_y = batch_y.to(device)
@@ -81,7 +85,7 @@ def main():
         preds = (outputs > 0.5).float()
 
         correct += (preds == y_test_cnn).sum().item()
-        total += batch_y.size(0)
+        total += y_test_cnn.size(0)
 
     print("Test Accuracy:", correct / total)
 
