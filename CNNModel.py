@@ -32,3 +32,24 @@ class DNA_CNN(nn.Module):
         x = torch.sigmoid(self.fc2(x))
         
         return x 
+
+    def fit(self, batches_cnn, device):
+        criterion = nn.BCELoss()
+        optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
+        for epoch in range(20):
+            self.train()
+            total_loss = 0
+            for batch_X, batch_y in batches_cnn:
+                batch_X = batch_X.to(device)
+                batch_y = batch_y.to(device)
+
+                optimizer.zero_grad()
+                
+                outputs = self(batch_X)
+                loss = criterion(outputs, batch_y)
+                
+                loss.backward()
+                optimizer.step()
+                total_loss += loss.item()
+
+        print(f"Epoch {epoch+1}, Loss: {total_loss:.4f}")

@@ -78,3 +78,16 @@ def train_loader(X_train_cnn, y_train_cnn):
         shuffle=True
     )
 
+def cnn_acc(cnn_model, X_test_cnn, y_test_cnn):
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        outputs = cnn_model(X_test_cnn)
+        preds = (outputs > 0.5).float()
+
+        correct += (preds == y_test_cnn).sum().item()
+        total += y_test_cnn.size(0)
+
+    return correct/total
+
